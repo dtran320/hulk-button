@@ -3,14 +3,14 @@ http://www.amazon.com/Smash-Button-Gadget-Dream-Cheeky/dp/B007GCAURS
 
 #Run:
 
-##To run the program in the terminal (ends when you close the terminal):
-python hulk\_smash.py
+**To run the program in the terminal (ends when you close the terminal):
+python hulk\_smash.py**
 
 Push the button!!!
 
 
 
-##To run the program in the background (continues to run when the terminal is closed):
+**To run the program in the background (continues to run when the terminal is closed):
 
 Start the Program
 ./start
