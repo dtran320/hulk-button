@@ -1,19 +1,27 @@
-import hid
-import time
-import subprocess
-import random
+#!/usr/bin/python
 
-# HULK SMASH
-SOUND_FILES = [
-    'itsbeautiful.wav', 'smash.wav', 'talkingabout2.wav', 'waitinfor.wav',
-    'snuggie.wav', 'wonagain.wav', 'partyhorn.mp3', 'choppa.mp3',
-    'fireworks.mp3', 'winning.m4a',
-]
+import datetime
+import hid
+import os
+import random
+import subprocess
+import time
+
+# HULK Button http://www.amazon.com/Smash-Button-Gadget-Dream-Cheeky/dp/B007GCAURS
 DREAM_CHEEKY_VENDOR_ID = 0x1d34
 HULK_SMASH_DEVICE_ID = 0x0008
+HULK_BUTTON_OFF_STATE = 27
+HULK_BUTTON_ON_STATE = 26
 
 def play_hulk_button():
+    """ Play awesome sounds whenever you hit the button!
 
+    Open the HID device, send the command, listen for state changes,
+    and play awesome sounds!
+    
+    """
+
+    start_time = datetime.datetime.now()
     for d in hid.enumerate(0, 0):
         keys = d.keys()
         keys.sort()
@@ -22,7 +30,7 @@ def play_hulk_button():
         print ""
 
     try:
-        print "Opening device"
+        print "Opening device..."
         h = hid.device()
         h.open(DREAM_CHEEKY_VENDOR_ID, HULK_SMASH_DEVICE_ID)
 
@@ -33,30 +41,34 @@ def play_hulk_button():
 
         h.write([0x08] + [0x00]*6 + [0x02])
         count = 0
-        button_count = 0
-        while button_count < 10:
+        button_presses = 0
+        while True:
             resp = h.read(8)
             if resp:
-                if resp[0] == 26:
+                if resp[0] == HULK_BUTTON_ON_STATE:
                     print "HULK SMASH"
-                    return_code = subprocess.call(
-                        ["afplay", 'sounds/%s' % random.choice(SOUND_FILES)])
-                    button_count += 1
+                    button_presses += 1
+                    sound = 'sounds/%s' % random.choice(os.listdir('sounds'))
+                    subprocess.call(["afplay", sound])
             else:
                 h.write([0x08] + [0x00]*6 + [0x02])
-            time.sleep(.01)
-            count += 1
+            time.sleep(.1)  # Not sure what the right interval to sleep for is
 
-        print "Closing device"
-        h.close()
-
-    except IOError, ex:
+    except IOError as ex:
         print ex
-        print "You probably don't have the hard coded test hid. Update the hid.device line"
-        print "in this script with one from the enumeration list output above and try again."
+        print "You probably don't have the Hulk button installed (or you smashed it too hard last time)."
+    except KeyboardInterrupt:
+        pass
+    cleanup_and_exit(h, button_presses, start_time)
 
-    print "Done"
+def cleanup_and_exit(handle, button_presses, start_time):
+    print "Closing device"
+    handle.close()
+    print "Done smashing! Button pressed %d times since %s." % (
+        button_presses, start_time)
 
-play_hulk_button()
+
+if __name__ == "__main__":
+    play_hulk_button()
 
 
