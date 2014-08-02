@@ -18,10 +18,11 @@ def play_hulk_button():
 
     Open the HID device, send the command, listen for state changes,
     and play awesome sounds!
-    
+
     """
 
     start_time = datetime.datetime.now()
+    button_presses = 0
     for d in hid.enumerate(0, 0):
         keys = d.keys()
         keys.sort()
@@ -40,8 +41,7 @@ def play_hulk_button():
         h.set_nonblocking(1)
 
         h.write([0x08] + [0x00]*6 + [0x02])
-        count = 0
-        button_presses = 0
+        
         while True:
             resp = h.read(8)
             if resp:
