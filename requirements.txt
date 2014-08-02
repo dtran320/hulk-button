@@ -1,0 +1,4 @@
+Cython==0.20.2
+hidapi==0.7.99-5
+ipython==2.1.0
+wsgiref==0.1.2
