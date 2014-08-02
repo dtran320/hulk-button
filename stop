@@ -1,0 +1,5 @@
+#!/bin/bash
+# Stop the button listening process
+# Name of process is name of python files hulk_smash.py
+FILE="hulk_smash.py"
+ps aux | grep $FILE | grep -v grep | awk '{ print $2 }' | xargs kill

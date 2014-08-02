@@ -1,0 +1,3 @@
+#!/bin/bash
+# Start the button listening process
+python hulk_smash.py &
